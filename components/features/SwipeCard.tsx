@@ -127,7 +127,6 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
           { scale: isActive ? 1 : isNext ? 0.95 : scale },
         ],
         opacity: isActive || isNext ? 1 : opacity,
-        zIndex: 100 - index,
       };
     });
 
@@ -174,13 +173,14 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
     return (
       <View className="absolute inset-0" style={{ zIndex: 100 - index }}>
         <GestureDetector gesture={gesture}>
-          <Animated.View className="flex-1" style={[styles.card, cardStyle]}>
+          <Animated.View className="flex-1 rounded-3xl overflow-hidden" style={[styles.card, cardStyle]}>
             <RestaurantCard restaurant={restaurant} />
 
             {/* Like Stamp */}
             <Animated.View
               className="absolute top-8 left-8 border-4 border-green-500 rounded-lg px-4 py-2"
               style={[likeStyle]}
+              pointerEvents="none"
             >
               <View className="flex-row items-center">
                 <View className="w-3 h-3 rounded-full bg-green-500 mr-2" />
@@ -194,6 +194,7 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
             <Animated.View
               className="absolute top-8 right-8 border-4 border-red-500 rounded-lg px-4 py-2"
               style={[nopeStyle]}
+              pointerEvents="none"
             >
               <View className="flex-row items-center">
                 <View className="w-3 h-3 rounded-full bg-red-500 mr-2" />

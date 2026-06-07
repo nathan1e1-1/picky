@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, Image, useWindowDimensions, Pressable } from 'react-native';
-import { Clock, MapPin, DollarSign } from 'lucide-react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { MapPin, Clock } from 'lucide-react-native';
 import { PickyRestaurant } from '@/types/restaurant';
 import { PickyScoreBadge } from '@/components/ui/PickyScoreBadge';
 
@@ -8,95 +8,126 @@ interface RestaurantCardProps {
   restaurant: PickyRestaurant;
 }
 
+function toTitleCase(str: string): string {
+  return str
+    .split(/[-\s]+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('-');
+}
+
+function PriceIndicator({ level }: { level: number }) {
+  const dots = Array.from({ length: 4 }, (_, i) => i < level);
+  return (
+    <View className="flex-row items-center gap-1">
+      {dots.map((filled, i) => (
+        <View
+          key={i}
+          className="rounded-full"
+          style={{
+            width: 6,
+            height: 6,
+            backgroundColor: filled ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.25)',
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
-  const priceSymbols = '$'.repeat(restaurant.priceRange);
+  // Show max 3 tags: all cuisine types up to 2, then dietary to fill
+  const cuisineTags = restaurant.cuisineTypes.slice(0, 2).map(toTitleCase);
+  const dietaryTags = restaurant.dietaryTags
+    .slice(0, Math.max(0, 3 - cuisineTags.length))
+    .map(toTitleCase);
+  const tags = [...cuisineTags, ...dietaryTags];
 
   return (
-    <View className="flex-1 rounded-3xl overflow-hidden bg-white dark:bg-neutral-800 shadow-lg">
-      {/* Image */}
-      <View className="relative h-[55%]">
-        <Image
-          source={{ uri: restaurant.photos[0] }}
-          className="w-full h-full"
-          resizeMode="cover"
-        />
-        <View className="absolute top-4 right-4">
-          <PickyScoreBadge score={restaurant.pickyScore} size="lg" />
-        </View>
-        <View className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+    <View
+      className="flex-1 rounded-3xl overflow-hidden"
+      style={styles.container}
+    >
+      {/* Full-bleed Image */}
+      <Image
+        source={{ uri: restaurant.photos[0] }}
+        className="absolute inset-0 w-full h-full"
+        resizeMode="cover"
+      />
+
+      {/* Dark overlay for text readability */}
+      <View style={styles.overlay} pointerEvents="none" />
+
+      {/* Score Badge - top right */}
+      <View className="absolute top-4 right-4 z-10">
+        <PickyScoreBadge score={restaurant.pickyScore} size="lg" />
       </View>
 
-      {/* Content */}
-      <View className="flex-1 px-5 py-4">
-        {/* Name */}
-        <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-2" numberOfLines={2}>
+      {/* Content overlay at bottom */}
+      <View className="absolute bottom-0 left-0 right-0 p-5 z-10">
+        <Text
+          className="text-white text-2xl font-bold mb-2"
+          numberOfLines={2}
+          style={styles.textShadow}
+        >
           {restaurant.name}
         </Text>
 
-        {/* Cuisine Tags */}
-        <View className="flex-row flex-wrap gap-2 mb-3">
-          {restaurant.cuisineTypes.map((cuisine) => (
-            <View
-              key={cuisine}
-              className="bg-orange-100 dark:bg-orange-900/30 px-3 py-1 rounded-full"
-            >
-              <Text className="text-orange-700 dark:text-orange-300 text-xs font-medium">
-                {cuisine}
-              </Text>
+        {/* Info Row: distance + price + open status */}
+        <View className="flex-row items-center mb-3" style={styles.textShadow}>
+          {restaurant.distance && (
+            <View className="flex-row items-center mr-4">
+              <MapPin size={14} color="rgba(255,255,255,0.8)" />
+              <Text className="text-white/80 text-sm ml-1">{restaurant.distance}</Text>
             </View>
-          ))}
-          {restaurant.dietaryTags.slice(0, 2).map((tag) => (
-            <View
-              key={tag}
-              className="bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full"
-            >
-              <Text className="text-green-700 dark:text-green-300 text-xs font-medium">
-                {tag}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Info Row */}
-        <View className="space-y-2">
-          <View className="flex-row items-center">
-            <MapPin size={16} color="#6b7280" style={{ marginRight: 8 }} />
-            <Text className="text-gray-600 dark:text-gray-300 text-sm flex-1" numberOfLines={1}>
-              {restaurant.address}
-            </Text>
-            {restaurant.distance && (
-              <Text className="text-gray-500 dark:text-gray-400 text-sm ml-2">
-                {restaurant.distance}
-              </Text>
-            )}
+          )}
+          <View className="flex-row items-center mr-4">
+            <PriceIndicator level={restaurant.priceRange} />
           </View>
-
           <View className="flex-row items-center">
-            <Clock size={16} color="#6b7280" style={{ marginRight: 8 }} />
+            <Clock size={14} color={restaurant.isOpenNow ? '#86efac' : '#fca5a5'} />
             <Text
-              className={`text-sm font-medium ${
-                restaurant.isOpenNow
-                  ? 'text-green-600 dark:text-green-400'
-                  : 'text-red-500 dark:text-red-400'
+              className={`text-sm ml-1 font-medium ${
+                restaurant.isOpenNow ? 'text-green-300' : 'text-red-300'
               }`}
             >
               {restaurant.isOpenNow ? 'Open Now' : 'Closed'}
             </Text>
           </View>
+        </View>
 
-          <View className="flex-row items-center">
-            <DollarSign size={16} color="#6b7280" style={{ marginRight: 8 }} />
-            <Text className="text-gray-600 dark:text-gray-300 text-sm">{priceSymbols}</Text>
+        {/* Tags */}
+        {tags.length > 0 && (
+          <View className="flex-row flex-wrap gap-2">
+            {tags.map((tag) => (
+              <View
+                key={tag}
+                className="px-3 py-1 rounded-full"
+                style={styles.tagBackground}
+              >
+                <Text className="text-white text-xs font-medium">{tag}</Text>
+              </View>
+            ))}
           </View>
-        </View>
-
-        {/* Picky Score Breakdown hint */}
-        <View className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-700">
-          <Text className="text-xs text-gray-400 dark:text-gray-500">
-            Tap the score to see how Picky rates this spot
-          </Text>
-        </View>
+        )}
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#1a1a1a',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+  },
+  textShadow: {
+    textShadowColor: 'rgba(0,0,0,0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  tagBackground: {
+    backgroundColor: 'rgba(255,255,255,0.25)',
+  },
+});

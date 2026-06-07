@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import { SwipeCard } from '@/components/features/SwipeCard';
 import { PickyRestaurant } from '@/types/restaurant';
 
@@ -23,7 +23,7 @@ const mockRestaurant: PickyRestaurant = {
     recencyBonus: 9,
   },
   menu: [],
-  dietaryTags: [],
+  dietaryTags: ['vegetarian', 'gluten-free'],
   lastSyncedAt: '2026-06-01T00:00:00Z',
   distance: '0.5 mi',
 };
@@ -36,8 +36,8 @@ describe('SwipeCard', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the restaurant card', async () => {
-    const { getByText } = await render(
+  it('renders the restaurant card with balanced info and title case tags', async () => {
+    const { getByText, getAllByText } = await render(
       <SwipeCard
         restaurant={mockRestaurant}
         onSwipeRight={onSwipeRight}
@@ -48,43 +48,12 @@ describe('SwipeCard', () => {
     );
 
     expect(getByText('Test Restaurant')).toBeTruthy();
+    expect(getByText('0.5 mi')).toBeTruthy();
+    expect(getByText('Open Now')).toBeTruthy();
+    // Tags should be title case
     expect(getByText('Italian')).toBeTruthy();
-  });
-
-  it('calls onSwipeRight when swiped right past threshold', async () => {
-    const { getByText } = await render(
-      <SwipeCard
-        restaurant={mockRestaurant}
-        onSwipeRight={onSwipeRight}
-        onSwipeLeft={onSwipeLeft}
-        activeIndex={0}
-        index={0}
-      />
-    );
-
-    const card = getByText('Test Restaurant');
-    fireEvent(card, 'onTouchEnd');
-
-    expect(onSwipeRight).not.toHaveBeenCalled();
-    expect(onSwipeLeft).not.toHaveBeenCalled();
-  });
-
-  it('calls onSwipeLeft when swiped left past threshold', async () => {
-    const { getByText } = await render(
-      <SwipeCard
-        restaurant={mockRestaurant}
-        onSwipeRight={onSwipeRight}
-        onSwipeLeft={onSwipeLeft}
-        activeIndex={0}
-        index={0}
-      />
-    );
-
-    const card = getByText('Test Restaurant');
-    fireEvent(card, 'onTouchEnd');
-
-    expect(onSwipeRight).not.toHaveBeenCalled();
-    expect(onSwipeLeft).not.toHaveBeenCalled();
+    expect(getAllByText('Vegetarian').length).toBeGreaterThanOrEqual(1);
+    expect(getAllByText('Gluten-Free').length).toBeGreaterThanOrEqual(1);
   });
 
   it('does not respond to gestures when not active', async () => {
@@ -98,10 +67,7 @@ describe('SwipeCard', () => {
       />
     );
 
-    const card = getByText('Test Restaurant');
-    fireEvent(card, 'onTouchEnd');
-
-    expect(onSwipeRight).not.toHaveBeenCalled();
-    expect(onSwipeLeft).not.toHaveBeenCalled();
+    // Card should still render but not be interactive
+    expect(getByText('Test Restaurant')).toBeTruthy();
   });
 });

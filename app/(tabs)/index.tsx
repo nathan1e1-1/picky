@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Heart, X, Zap } from 'lucide-react-native';
+import { Heart } from 'lucide-react-native';
 import { SwipeCard, SwipeCardRef } from '@/components/features/SwipeCard';
 import { mockRestaurants } from '@/lib/mockData';
 import { PickyRestaurant } from '@/types/restaurant';
@@ -25,48 +25,26 @@ export default function SwipeFeedScreen() {
     setActiveIndex((prev) => prev + 1);
   }, []);
 
-  const handleButtonSwipe = useCallback(
-    (direction: 'left' | 'right') => {
-      if (activeIndex >= restaurants.length) return;
-      if (cardRef.current) {
-        if (direction === 'right') {
-          cardRef.current.swipeRight();
-        } else {
-          cardRef.current.swipeLeft();
-        }
-      }
-    },
-    [activeIndex, restaurants.length]
-  );
-
   const handleReset = useCallback(() => {
     setActiveIndex(0);
     setRestaurants((prev) => [...prev]);
   }, []);
 
   const hasMoreCards = activeIndex < restaurants.length;
+  const remainingCount = restaurants.length - activeIndex;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-neutral-900">
       {/* Header */}
-      <View className="px-5 pt-2 pb-4 flex-row items-center justify-between">
-        <View>
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white">Picky</Text>
-          <Text className="text-sm text-gray-500 dark:text-gray-400">
-            {hasMoreCards ? `${restaurants.length - activeIndex} spots nearby` : 'All caught up!'}
-          </Text>
-        </View>
-        <Pressable
-          className="bg-orange-500 px-4 py-2 rounded-full flex-row items-center"
-          onPress={() => {/* Navigate to Emergency Mode */}}
-        >
-          <Zap size={16} color="white" />
-          <Text className="text-white font-semibold ml-1 text-sm">Emergency</Text>
-        </Pressable>
+      <View className="px-5 pt-2 pb-4">
+        <Text className="text-2xl font-bold text-gray-900 dark:text-white">Picky</Text>
+        <Text className="text-sm text-gray-500 dark:text-gray-400">
+          {hasMoreCards ? `${remainingCount} spots nearby` : 'All caught up!'}
+        </Text>
       </View>
 
       {/* Card Stack */}
-      <View className="flex-1 px-4 pb-4">
+      <View className="flex-1 px-4 pb-4 relative">
         {hasMoreCards ? (
           <View className="flex-1">
             {/* Render cards in reverse order so the first card is on top */}
@@ -106,29 +84,6 @@ export default function SwipeFeedScreen() {
           </View>
         )}
       </View>
-
-      {/* Action Buttons */}
-      {hasMoreCards && (
-        <View className="flex-row items-center justify-center gap-6 pb-6 px-4">
-          <Pressable
-            className="w-16 h-16 rounded-full bg-white dark:bg-neutral-800 shadow-md items-center justify-center border border-gray-100 dark:border-gray-700"
-            onPress={() => handleButtonSwipe('left')}
-            accessibilityLabel="Dismiss restaurant"
-            accessibilityRole="button"
-          >
-            <X size={28} color="#ef4444" />
-          </Pressable>
-
-          <Pressable
-            className="w-16 h-16 rounded-full bg-white dark:bg-neutral-800 shadow-md items-center justify-center border border-gray-100 dark:border-gray-700"
-            onPress={() => handleButtonSwipe('right')}
-            accessibilityLabel="Save restaurant"
-            accessibilityRole="button"
-          >
-            <Heart size={28} color="#22c55e" />
-          </Pressable>
-        </View>
-      )}
     </SafeAreaView>
   );
 }
