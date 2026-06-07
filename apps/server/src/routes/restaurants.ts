@@ -29,11 +29,11 @@ export async function restaurantRoutes(app: FastifyInstance) {
       const restaurants = await service.searchNearby(latNum, lngNum, radiusNum, type);
       return restaurants;
     } catch (err: any) {
-      request.log.error(err);
+      request.log.error({ msg: 'Google Places search failed', error: err.message, stack: err.stack });
       if (err.message?.includes('GOOGLE_PLACES_API_KEY not configured')) {
         return reply.status(500).send({ error: 'Service configuration error' });
       }
-      return reply.status(500).send({ error: 'Service unavailable' });
+      return reply.status(500).send({ error: 'Service unavailable', detail: err.message });
     }
   });
 }
