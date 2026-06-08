@@ -11,3 +11,7 @@ export const Trash2 = () => React.createElement(View, null);
 export const MapPin = () => React.createElement(View, null);
 export const Clock = () => React.createElement(View, null);
 export const DollarSign = () => React.createElement(View, null);
+export const Star = () => React.createElement(View, null);
+export const ArrowLeft = () => React.createElement(View, null);
+export const Phone = () => React.createElement(View, null);
+export const Globe = () => React.createElement(View, null);

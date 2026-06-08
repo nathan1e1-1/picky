@@ -22,6 +22,7 @@ export function RestaurantDetail({ details, onBack }: RestaurantDetailProps) {
           </View>
         )}
         <Pressable
+          testID="back-button"
           className="absolute top-12 left-4 w-10 h-10 rounded-full bg-black/50 items-center justify-center"
           onPress={onBack}
         >
