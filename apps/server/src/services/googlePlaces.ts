@@ -83,9 +83,9 @@ export class GooglePlacesService {
       dietaryTags: [],
       menu: [],
       hours: {},
-      pickyScore: 0,
+      pickyScore: Math.round((place.rating || 0) * 20),
       pickyScoreBreakdown: {
-        googleRating: 0,
+        googleRating: place.rating || 0,
         yelpRating: 0,
         communityTipQuality: 0,
         visitToSaveRatio: 0,

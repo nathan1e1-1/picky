@@ -2,6 +2,15 @@ import { PickyRestaurant } from '@picky/types';
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.111:3000';
 
+export function shuffle<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export interface PlaceDetails {
   placeId: string;
   name: string;
@@ -31,7 +40,8 @@ export async function fetchNearbyRestaurants(
     throw new Error(error.error || `API error: ${response.status}`);
   }
 
-  return response.json();
+  const data: PickyRestaurant[] = await response.json();
+  return shuffle(data);
 }
 
 export async function fetchPlaceDetails(placeId: string): Promise<PlaceDetails> {

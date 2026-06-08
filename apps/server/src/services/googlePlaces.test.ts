@@ -25,6 +25,8 @@ describe('GooglePlacesService', () => {
             vicinity: '123 Main St, San Francisco',
             geometry: { location: { lat: 37.7749, lng: -122.4194 } },
             opening_hours: { open_now: true },
+            rating: 4.5,
+            user_ratings_total: 120,
             price_level: 2,
             photos: [{ photo_reference: 'photo123', width: 400, height: 300 }],
             types: ['restaurant', 'italian', 'food'],
@@ -47,6 +49,8 @@ describe('GooglePlacesService', () => {
     expect(results[0].photos[0]).toContain('photo_reference=photo123');
     expect(results[0].photos[0]).toContain('maxwidth=800');
     expect(results[0].distance).toMatch(/^\d+\.\d mi$/);
+    expect(results[0].pickyScore).toBe(90); // 4.5 * 20 = 90
+    expect(results[0].pickyScoreBreakdown.googleRating).toBe(4.5);
   });
 
   it('filters out generic types and title-cases cuisine', async () => {
