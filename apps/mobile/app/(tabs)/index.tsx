@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { SwipeCard } from '@/components/features/SwipeCard';
 import { PickyRestaurant } from '@picky/types';
 import { useSavedStore } from '@/store/savedStore';
@@ -44,6 +45,10 @@ export default function SwipeFeedScreen() {
 
   const handleReset = useCallback(() => {
     setActiveIndex(0);
+  }, []);
+
+  const handleTap = useCallback((restaurant: PickyRestaurant) => {
+    router.push(`/restaurant/${encodeURIComponent(restaurant.id)}`);
   }, []);
 
   const hasMoreCards = activeIndex < restaurants.length;
@@ -117,6 +122,7 @@ export default function SwipeFeedScreen() {
                   restaurant={restaurant}
                   onSwipeRight={handleSwipeRight}
                   onSwipeLeft={handleSwipeLeft}
+                  onTap={handleTap}
                   activeIndex={activeIndex}
                   index={actualIndex}
                 />

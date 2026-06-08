@@ -22,6 +22,7 @@ interface SwipeCardProps {
   restaurant: PickyRestaurant;
   onSwipeRight: (restaurant: PickyRestaurant) => void;
   onSwipeLeft: (restaurant: PickyRestaurant) => void;
+  onTap: (restaurant: PickyRestaurant) => void;
   activeIndex: number;
   index: number;
 }
@@ -30,7 +31,7 @@ const SWIPE_THRESHOLD = 120;
 const SWIPE_OUT_DURATION = 250;
 
 export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
-  function SwipeCard({ restaurant, onSwipeRight, onSwipeLeft, activeIndex, index }, ref) {
+  function SwipeCard({ restaurant, onSwipeRight, onSwipeLeft, onTap, activeIndex, index }, ref) {
     const { width } = useWindowDimensions();
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
@@ -71,8 +72,15 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
       swipeLeft: () => triggerSwipe('left'),
     }));
 
-    const gesture = Gesture.Pan()
+    const handleTap = useCallback(() => {
+      if (isActive) {
+        onTap(restaurant);
+      }
+    }, [isActive, onTap, restaurant]);
+
+    const panGesture = Gesture.Pan()
       .enabled(isActive)
+      .minDistance(10)
       .onBegin(() => {
         rotate.value = withSpring(0);
       })
@@ -103,6 +111,14 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
           rotate.value = withSpring(0);
         }
       });
+
+    const tapGesture = Gesture.Tap()
+      .enabled(isActive)
+      .onEnd(() => {
+        runOnJS(handleTap)();
+      });
+
+    const gesture = Gesture.Race(panGesture, tapGesture);
 
     const cardStyle = useAnimatedStyle(() => {
       const scale = interpolate(
