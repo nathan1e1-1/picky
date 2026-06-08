@@ -84,7 +84,9 @@ describe('restaurantRoutes', () => {
     });
 
     expect(response.statusCode).toBe(500);
-    expect(JSON.parse(response.body)).toEqual({ error: 'Service unavailable' });
+    const body = JSON.parse(response.body);
+    expect(body.error).toBe('Service unavailable');
+    expect(body.detail).toBeDefined();
   });
 
   it('returns empty array when no results found', async () => {

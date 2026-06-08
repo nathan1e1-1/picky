@@ -117,6 +117,56 @@ describe('GooglePlacesService', () => {
     await expect(service.searchNearby(0, 0)).rejects.toThrow('GOOGLE_PLACES_API_KEY not configured');
   });
 
+  it('excludes places with lodging type (hotels)', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJhotel',
+            name: 'Marriott Downtown',
+            vicinity: '123 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['lodging', 'restaurant', 'food'],
+          },
+          {
+            place_id: 'ChIJburger',
+            name: 'Burger Joint',
+            vicinity: '456 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe('Burger Joint');
+    expect(results[0].googlePlaceId).toBe('ChIJburger');
+  });
+
+  it('excludes department stores', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJtarget',
+            name: 'Target',
+            vicinity: '789 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['department_store', 'food'],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+    expect(results).toHaveLength(0);
+  });
+
   it('passes correct query parameters to Google API', async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       json: async () => ({ status: 'ZERO_RESULTS', results: [] }),

@@ -12,6 +12,18 @@ function getApiKey(): string {
 }
 
 export class GooglePlacesService {
+  private readonly EXCLUDED_TYPES = new Set([
+    'lodging',
+    'department_store',
+    'gas_station',
+    'car_rental',
+    'supermarket',
+    'shopping_mall',
+    'electronics_store',
+    'convenience_store',
+    'hardware_store',
+  ]);
+
   async searchNearby(
     lat: number,
     lng: number,
@@ -37,7 +49,13 @@ export class GooglePlacesService {
       throw new Error(`Google Places error: ${data.status} - ${data.error_message || ''}`);
     }
 
-    return (data.results || []).map((place) => this.mapToPickyRestaurant(place, lat, lng));
+    return (data.results || [])
+      .filter((place) => this.isRestaurant(place))
+      .map((place) => this.mapToPickyRestaurant(place, lat, lng));
+  }
+
+  private isRestaurant(place: GooglePlace): boolean {
+    return !place.types?.some((t) => this.EXCLUDED_TYPES.has(t));
   }
 
   private mapToPickyRestaurant(place: GooglePlace, userLat: number, userLng: number): PickyRestaurant {
