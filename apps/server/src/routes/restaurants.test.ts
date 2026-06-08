@@ -119,4 +119,35 @@ describe('restaurantRoutes', () => {
     expect(callUrl).toContain('radius=1000');
     expect(callUrl).toContain('type=cafe');
   });
+
+  it('returns place details for a valid place_id', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        result: {
+          place_id: 'ChIJ123',
+          name: 'Test Restaurant',
+          formatted_address: '123 Main St',
+          formatted_phone_number: '(415) 555-0101',
+          website: 'https://test.com',
+          opening_hours: { open_now: true, weekday_text: ['Monday: 11:00 AM – 10:00 PM'] },
+          photos: [],
+          rating: 4.5,
+          user_ratings_total: 100,
+        },
+        status: 'OK',
+      }),
+    });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/restaurants/ChIJ123/details',
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.name).toBe('Test Restaurant');
+    expect(body.phone).toBe('(415) 555-0101');
+    expect(body.website).toBe('https://test.com');
+    expect(body.isOpenNow).toBe(true);
+  });
 });

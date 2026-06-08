@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { GooglePlacesService } from '../services/googlePlaces';
+import { PlaceDetailsService } from '../services/placeDetails';
 
 interface NearbyQuery {
   lat: string;
@@ -9,7 +10,8 @@ interface NearbyQuery {
 }
 
 export async function restaurantRoutes(app: FastifyInstance) {
-  const service = new GooglePlacesService();
+  const nearbyService = new GooglePlacesService();
+  const detailsService = new PlaceDetailsService();
 
   app.get('/nearby', async (
     request: FastifyRequest<{ Querystring: NearbyQuery }>,
@@ -26,7 +28,7 @@ export async function restaurantRoutes(app: FastifyInstance) {
     }
 
     try {
-      const restaurants = await service.searchNearby(latNum, lngNum, radiusNum, type);
+      const restaurants = await nearbyService.searchNearby(latNum, lngNum, radiusNum, type);
       return restaurants;
     } catch (err: any) {
       request.log.error({ msg: 'Google Places search failed', error: err.message, stack: err.stack });
@@ -34,6 +36,21 @@ export async function restaurantRoutes(app: FastifyInstance) {
         return reply.status(500).send({ error: 'Service configuration error' });
       }
       return reply.status(500).send({ error: 'Service unavailable', detail: err.message });
+    }
+  });
+
+  app.get('/:id/details', async (
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply
+  ) => {
+    const { id } = request.params;
+
+    try {
+      const details = await detailsService.getDetails(id);
+      return details;
+    } catch (err: any) {
+      request.log.error({ msg: 'Place details failed', error: err.message });
+      return reply.status(500).send({ error: 'Service unavailable' });
     }
   });
 }
