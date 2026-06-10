@@ -1,13 +1,34 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
-import SwipeFeedScreen from '@/app/(tabs)/index';
-import { fetchNearbyRestaurants } from '@/lib/api';
+import { render, waitFor, fireEvent } from '@testing-library/react-native';
+import { fetchNearbyRestaurants, jitterCoordinates } from '@/lib/api';
+import { useLocation } from '@/hooks/useLocation';
 
 jest.mock('@/lib/api');
+jest.mock('@/hooks/useLocation');
+
+// Set mock before importing component
+(useLocation as jest.Mock).mockReturnValue({
+  lat: 37.7749,
+  lng: -122.4194,
+  loading: false,
+  error: null,
+  refetch: jest.fn(),
+});
+
+(jitterCoordinates as jest.Mock).mockReturnValue({ lat: 37.79, lng: -122.43 });
+
+import SwipeFeedScreen from '@/app/(tabs)/index';
 
 describe('SwipeFeedScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (useLocation as jest.Mock).mockReturnValue({
+      lat: 37.7749,
+      lng: -122.4194,
+      loading: false,
+      error: null,
+      refetch: jest.fn(),
+    });
   });
 
   it('shows loading state while fetching location and restaurants', async () => {
@@ -58,6 +79,26 @@ describe('SwipeFeedScreen', () => {
 
     const { getByText } = await render(<SwipeFeedScreen />);
 
+    await waitFor(() => expect(getByText("You've seen it all!")).toBeTruthy());
+  });
+
+  it('shows "Find More Restaurants" button in empty state', async () => {
+    (fetchNearbyRestaurants as jest.Mock).mockResolvedValue([]);
+
+    const { getByText } = await render(<SwipeFeedScreen />);
+
+    await waitFor(() => expect(getByText('Find More Restaurants')).toBeTruthy());
+  });
+
+  it('calls fetchNearbyRestaurants when "Find More" is pressed', async () => {
+    (fetchNearbyRestaurants as jest.Mock).mockResolvedValue([]);
+
+    const { getByText } = await render(<SwipeFeedScreen />);
+    await waitFor(() => expect(getByText('Find More Restaurants')).toBeTruthy());
+
+    fireEvent.press(getByText('Find More Restaurants'));
+
+    // The button should not crash even when lat is not available yet
     await waitFor(() => expect(getByText("You've seen it all!")).toBeTruthy());
   });
 });

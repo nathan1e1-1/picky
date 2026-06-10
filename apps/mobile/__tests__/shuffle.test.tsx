@@ -1,4 +1,4 @@
-import { shuffle } from '@/lib/api';
+import { shuffle, jitterCoordinates } from '@/lib/api';
 
 describe('shuffle', () => {
   it('returns a different order on subsequent calls', () => {
@@ -21,5 +21,19 @@ describe('shuffle', () => {
     const shuffled = shuffle(items);
     expect(shuffled).toHaveLength(5);
     expect(shuffled.sort()).toEqual(items.sort());
+  });
+});
+
+describe('jitterCoordinates', () => {
+  it('returns coordinates within ±0.015° of the input', () => {
+    const { lat, lng } = jitterCoordinates(37.7749, -122.4194);
+    expect(Math.abs(lat - 37.7749)).toBeLessThanOrEqual(0.015);
+    expect(Math.abs(lng - -122.4194)).toBeLessThanOrEqual(0.015);
+  });
+
+  it('returns different values on subsequent calls', () => {
+    const result1 = jitterCoordinates(37.7749, -122.4194);
+    const result2 = jitterCoordinates(37.7749, -122.4194);
+    expect(result1.lat !== result2.lat || result1.lng !== result2.lng).toBe(true);
   });
 });

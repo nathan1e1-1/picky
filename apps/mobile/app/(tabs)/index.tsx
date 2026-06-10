@@ -7,7 +7,7 @@ import { SwipeCard } from '@/components/features/SwipeCard';
 import { PickyRestaurant } from '@picky/types';
 import { useSavedStore } from '@/store/savedStore';
 import { useLocation } from '@/hooks/useLocation';
-import { fetchNearbyRestaurants } from '@/lib/api';
+import { fetchNearbyRestaurants, jitterCoordinates } from '@/lib/api';
 
 export default function SwipeFeedScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -50,6 +50,21 @@ export default function SwipeFeedScreen() {
   const handleTap = useCallback((restaurant: PickyRestaurant) => {
     router.push(`/restaurant/${encodeURIComponent(restaurant.id)}`);
   }, []);
+
+  const handleFindMore = useCallback(() => {
+    if (lat && lng) {
+      setLoading(true);
+      setError(null);
+      const { lat: jitteredLat, lng: jitteredLng } = jitterCoordinates(lat, lng);
+      fetchNearbyRestaurants(jitteredLat, jitteredLng)
+        .then((data) => {
+          setRestaurants(data);
+          setActiveIndex(0);
+        })
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    }
+  }, [lat, lng]);
 
   const hasMoreCards = activeIndex < restaurants.length;
   const remainingCount = restaurants.length - activeIndex;
@@ -141,10 +156,16 @@ export default function SwipeFeedScreen() {
               Check back later for more restaurant recommendations near you.
             </Text>
             <Pressable
-              className="bg-orange-500 px-6 py-3 rounded-full"
+              className="bg-orange-500 px-6 py-3 rounded-full mb-3"
+              onPress={handleFindMore}
+            >
+              <Text className="text-white font-semibold text-base">Find More Restaurants</Text>
+            </Pressable>
+            <Pressable
+              className="border border-gray-300 dark:border-gray-700 px-6 py-3 rounded-full"
               onPress={handleReset}
             >
-              <Text className="text-white font-semibold text-base">Start Over</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-semibold text-base">Start Over</Text>
             </Pressable>
           </View>
         )}

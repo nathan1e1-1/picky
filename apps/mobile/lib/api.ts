@@ -11,6 +11,14 @@ export function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
+export function jitterCoordinates(lat: number, lng: number): { lat: number; lng: number } {
+  const offset = 0.015;
+  return {
+    lat: lat + (Math.random() - 0.5) * offset * 2,
+    lng: lng + (Math.random() - 0.5) * offset * 2,
+  };
+}
+
 export interface PlaceDetails {
   placeId: string;
   name: string;
