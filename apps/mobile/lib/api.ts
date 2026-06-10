@@ -32,6 +32,25 @@ export interface PlaceDetails {
   reviewCount: number;
 }
 
+export function fetchWithTimeout(
+  url: string,
+  options?: RequestInit,
+  timeoutMs: number = 10000
+): Promise<Response> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('Request timed out')), timeoutMs);
+    fetch(url, options)
+      .then((response) => {
+        clearTimeout(timer);
+        resolve(response);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
+
 export async function fetchNearbyRestaurants(
   lat: number,
   lng: number,
@@ -42,7 +61,7 @@ export async function fetchNearbyRestaurants(
   url.searchParams.set('lng', String(lng));
   url.searchParams.set('radius', String(radius));
 
-  const response = await fetch(url.toString());
+  const response = await fetchWithTimeout(url.toString());
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Unknown error' }));
     throw new Error(error.error || `API error: ${response.status}`);
@@ -53,7 +72,7 @@ export async function fetchNearbyRestaurants(
 }
 
 export async function fetchPlaceDetails(placeId: string): Promise<PlaceDetails> {
-  const response = await fetch(`${API_BASE}/api/restaurants/${encodeURIComponent(placeId)}/details`);
+  const response = await fetchWithTimeout(`${API_BASE}/api/restaurants/${encodeURIComponent(placeId)}/details`);
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Unknown error' }));
     throw new Error(error.error || `API error: ${response.status}`);
