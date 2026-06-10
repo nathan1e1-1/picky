@@ -8,6 +8,7 @@ import { PickyRestaurant } from '@picky/types';
 import { useSavedStore } from '@/store/savedStore';
 import { useLocation } from '@/hooks/useLocation';
 import { fetchNearbyRestaurants, jitterCoordinates } from '@/lib/api';
+import { mockRestaurants } from '@/lib/mockData';
 
 export default function SwipeFeedScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -66,6 +67,12 @@ export default function SwipeFeedScreen() {
     }
   }, [lat, lng]);
 
+  const handleUseDemoData = useCallback(() => {
+    setRestaurants(mockRestaurants);
+    setActiveIndex(0);
+    setError(null);
+  }, []);
+
   const hasMoreCards = activeIndex < restaurants.length;
   const remainingCount = restaurants.length - activeIndex;
 
@@ -83,16 +90,18 @@ export default function SwipeFeedScreen() {
   if (locationError || error) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 dark:bg-neutral-900 items-center justify-center px-8">
-        <Text className="text-xl font-bold text-gray-900 dark:text-white text-center mb-4">
+        <Text className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
           {locationError || error}
         </Text>
+        <Text className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
+          Server: {process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.111:3000'}
+        </Text>
         <Pressable
-          className="bg-orange-500 px-6 py-3 rounded-full"
+          className="bg-orange-500 px-6 py-3 rounded-full mb-3"
           onPress={() => {
             if (locationError) {
               refetchLocation();
             } else {
-              // retry fetching restaurants if location is available
               if (lat && lng) {
                 setLoading(true);
                 setError(null);
@@ -108,6 +117,12 @@ export default function SwipeFeedScreen() {
           }}
         >
           <Text className="text-white font-semibold">Try Again</Text>
+        </Pressable>
+        <Pressable
+          className="border border-orange-500 px-6 py-3 rounded-full mb-3"
+          onPress={handleUseDemoData}
+        >
+          <Text className="text-orange-500 font-semibold">Use Demo Data</Text>
         </Pressable>
       </SafeAreaView>
     );
