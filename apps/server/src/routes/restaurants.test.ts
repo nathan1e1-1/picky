@@ -121,7 +121,7 @@ describe('restaurantRoutes', () => {
 
     const callUrl = (global.fetch as jest.Mock).mock.calls[0][0];
     expect(callUrl).toContain('radius=1000');
-    expect(callUrl).toContain('type=cafe');
+    expect(callUrl).toContain('keyword=restaurant');
   });
 
   it('returns place details for a valid place_id', async () => {

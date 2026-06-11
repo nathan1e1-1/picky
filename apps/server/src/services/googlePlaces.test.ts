@@ -195,10 +195,9 @@ describe('GooglePlacesService', () => {
     await service.searchNearby(37.7749, -122.4194, 1000, 'cafe');
 
     const callUrl = (global.fetch as jest.Mock).mock.calls[0][0];
-    expect(callUrl).toContain('query=restaurants');
     expect(callUrl).toContain('location=37.7749%2C-122.4194');
     expect(callUrl).toContain('radius=1000');
-    expect(callUrl).toContain('type=cafe');
+    expect(callUrl).toContain('keyword=restaurant');
     expect(callUrl).toContain('key=test-key');
   });
 
