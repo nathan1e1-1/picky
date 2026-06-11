@@ -39,7 +39,7 @@ export class GooglePlacesService {
     url.searchParams.set('location', `${lat},${lng}`);
     url.searchParams.set('radius', String(radius));
     url.searchParams.set('keyword', 'restaurant');
-    url.searchParams.set('minprice', '1');
+    url.searchParams.set('minprice', '2');
     url.searchParams.set('key', apiKey);
 
     const response = await fetch(url.toString());

@@ -198,6 +198,7 @@ describe('GooglePlacesService', () => {
     expect(callUrl).toContain('location=37.7749%2C-122.4194');
     expect(callUrl).toContain('radius=1000');
     expect(callUrl).toContain('keyword=restaurant');
+    expect(callUrl).toContain('minprice=2');
     expect(callUrl).toContain('key=test-key');
   });
 
