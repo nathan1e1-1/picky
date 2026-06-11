@@ -37,6 +37,8 @@ export class GooglePlacesService {
     url.searchParams.set('location', `${lat},${lng}`);
     url.searchParams.set('radius', String(radius));
     url.searchParams.set('type', type);
+    url.searchParams.set('rankby', 'prominence');
+    url.searchParams.set('minprice', '1');
     url.searchParams.set('key', apiKey);
 
     const response = await fetch(url.toString());
@@ -67,7 +69,12 @@ export class GooglePlacesService {
     }
 
     // Exclude places with no rating or very low rating
-    if (place.rating === undefined || place.rating < 3.5) {
+    if (place.rating === undefined || place.rating < 3.8) {
+      return false;
+    }
+
+    // Exclude places with few reviews (less than 30 reviews = likely new/unestablished)
+    if (place.user_ratings_total === undefined || place.user_ratings_total < 30) {
       return false;
     }
 
