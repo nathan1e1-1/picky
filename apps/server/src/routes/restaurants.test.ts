@@ -35,7 +35,7 @@ describe('restaurantRoutes', () => {
             geometry: { location: { lat: 37.7749, lng: -122.4194 } },
             types: ['restaurant'],
             rating: 4.0,
-            user_ratings_total: 50,
+            user_ratings_total: 120,
             photos: [{ photo_reference: 'photo1' }],
             business_status: 'OPERATIONAL',
           },

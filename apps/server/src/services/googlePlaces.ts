@@ -23,6 +23,8 @@ export class GooglePlacesService {
     'convenience_store',
     'hardware_store',
     'meal_takeaway',
+    'food_court',
+    'meal_delivery',
   ]);
 
   async searchNearby(
@@ -73,8 +75,8 @@ export class GooglePlacesService {
       return false;
     }
 
-    // Exclude places with few reviews (less than 30 reviews = likely new/unestablished)
-    if (place.user_ratings_total === undefined || place.user_ratings_total < 30) {
+    // Exclude places with few reviews (less than 100 reviews = likely new/unestablished)
+    if (place.user_ratings_total === undefined || place.user_ratings_total < 100) {
       return false;
     }
 
