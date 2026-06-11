@@ -1,7 +1,7 @@
 import { PickyRestaurant } from '@picky/types';
 import { GooglePlace, GooglePlacesResponse } from '../types';
 
-const NEARBY_SEARCH_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+const TEXT_SEARCH_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
 
 function getApiKey(): string {
   const key = process.env.GOOGLE_PLACES_API_KEY;
@@ -35,11 +35,11 @@ export class GooglePlacesService {
   ): Promise<PickyRestaurant[]> {
     const apiKey = getApiKey();
 
-    const url = new URL(NEARBY_SEARCH_URL);
+    const url = new URL(TEXT_SEARCH_URL);
+    url.searchParams.set('query', 'restaurants');
     url.searchParams.set('location', `${lat},${lng}`);
     url.searchParams.set('radius', String(radius));
     url.searchParams.set('type', type);
-    url.searchParams.set('rankby', 'prominence');
     url.searchParams.set('minprice', '1');
     url.searchParams.set('key', apiKey);
 
