@@ -401,4 +401,51 @@ describe('GooglePlacesService', () => {
     const results = await service.searchNearby(37.7749, -122.4194);
     expect(results).toHaveLength(0);
   });
+
+  it('excludes places with sketchy names like stalls and carts', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJstall',
+            name: 'ABC Food Stall',
+            vicinity: '123 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 120,
+            photos: [{ photo_reference: 'photo1' }],
+          },
+          {
+            place_id: 'ChIJtruck',
+            name: 'Taco Truck',
+            vicinity: '456 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 120,
+            photos: [{ photo_reference: 'photo2' }],
+          },
+          {
+            place_id: 'ChIJreal',
+            name: 'Real Restaurant',
+            vicinity: '789 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 120,
+            photos: [{ photo_reference: 'photo3' }],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe('Real Restaurant');
+  });
 });

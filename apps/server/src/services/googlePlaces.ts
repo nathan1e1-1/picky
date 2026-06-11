@@ -84,6 +84,17 @@ export class GooglePlacesService {
       return false;
     }
 
+    // Exclude places with sketchy names (stalls, carts, trucks, etc.)
+    const sketchyNamePatterns = [
+      'stall', 'cart', 'truck', 'hawker', 'food court',
+      'kiosk', 'stand', 'vendor', 'pasar', 'market',
+      'food centre', 'food center', 'food corner',
+    ];
+    const nameLower = place.name.toLowerCase();
+    if (sketchyNamePatterns.some((pattern) => nameLower.includes(pattern))) {
+      return false;
+    }
+
     return true;
   }
 
