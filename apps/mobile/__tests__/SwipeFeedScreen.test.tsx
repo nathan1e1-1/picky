@@ -101,4 +101,26 @@ describe('SwipeFeedScreen', () => {
     // The button should not crash even when lat is not available yet
     await waitFor(() => expect(getByText("You've seen it all!")).toBeTruthy());
   });
+
+  it('shows "Use Demo Data" button when API fails', async () => {
+    (fetchNearbyRestaurants as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+    const { getByText } = await render(<SwipeFeedScreen />);
+
+    await waitFor(() => expect(getByText('Network error')).toBeTruthy());
+    expect(getByText('Use Demo Data')).toBeTruthy();
+  });
+
+  it('shows demo restaurants when "Use Demo Data" is pressed', async () => {
+    (fetchNearbyRestaurants as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+    const { getByText, queryByText } = await render(<SwipeFeedScreen />);
+    await waitFor(() => expect(getByText('Network error')).toBeTruthy());
+
+    fireEvent.press(getByText('Use Demo Data'));
+
+    await waitFor(() => expect(queryByText('Network error')).toBeNull());
+    // Should show at least one mock restaurant
+    expect(getByText('The Golden Spoon')).toBeTruthy();
+  });
 });
