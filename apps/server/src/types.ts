@@ -11,6 +11,7 @@ export interface GooglePlace {
   types?: string[];
   rating?: number;
   user_ratings_total?: number;
+  business_status?: string;
 }
 
 export interface GooglePlacesResponse {

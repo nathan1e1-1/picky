@@ -22,6 +22,7 @@ export class GooglePlacesService {
     'electronics_store',
     'convenience_store',
     'hardware_store',
+    'meal_takeaway',
   ]);
 
   async searchNearby(
@@ -55,7 +56,27 @@ export class GooglePlacesService {
   }
 
   private isRestaurant(place: GooglePlace): boolean {
-    return !place.types?.some((t) => this.EXCLUDED_TYPES.has(t));
+    // Exclude non-restaurant types
+    if (place.types?.some((t) => this.EXCLUDED_TYPES.has(t))) {
+      return false;
+    }
+
+    // Exclude permanently closed places
+    if (place.business_status && place.business_status !== 'OPERATIONAL') {
+      return false;
+    }
+
+    // Exclude places with no rating or very low rating
+    if (place.rating === undefined || place.rating < 3.5) {
+      return false;
+    }
+
+    // Exclude places with no photos (sketchy places often have no photos)
+    if (!place.photos || place.photos.length === 0) {
+      return false;
+    }
+
+    return true;
   }
 
   private mapToPickyRestaurant(place: GooglePlace, userLat: number, userLng: number): PickyRestaurant {

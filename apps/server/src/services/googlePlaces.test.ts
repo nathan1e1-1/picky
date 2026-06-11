@@ -64,6 +64,10 @@ describe('GooglePlacesService', () => {
             vicinity: '456 Oak Ave',
             geometry: { location: { lat: 37.7849, lng: -122.4094 } },
             types: ['restaurant', 'sushi', 'establishment', 'point_of_interest', 'food'],
+            rating: 4.2,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+            business_status: 'OPERATIONAL',
           },
         ],
       }),
@@ -85,6 +89,10 @@ describe('GooglePlacesService', () => {
             vicinity: '789 Mission St',
             geometry: { location: { lat: 37.784, lng: -122.4065 } },
             opening_hours: { open_now: false },
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+            business_status: 'OPERATIONAL',
           },
         ],
       }),
@@ -132,6 +140,10 @@ describe('GooglePlacesService', () => {
             vicinity: '123 Market St',
             geometry: { location: { lat: 37.7749, lng: -122.4194 } },
             types: ['lodging', 'restaurant', 'food'],
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+            business_status: 'OPERATIONAL',
           },
           {
             place_id: 'ChIJburger',
@@ -139,6 +151,10 @@ describe('GooglePlacesService', () => {
             vicinity: '456 Mission St',
             geometry: { location: { lat: 37.784, lng: -122.4065 } },
             types: ['restaurant', 'food'],
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo2' }],
+            business_status: 'OPERATIONAL',
           },
         ],
       }),
@@ -183,5 +199,158 @@ describe('GooglePlacesService', () => {
     expect(callUrl).toContain('radius=1000');
     expect(callUrl).toContain('type=cafe');
     expect(callUrl).toContain('key=test-key');
+  });
+
+  it('filters out permanently closed places', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJclosed',
+            name: 'Closed Forever',
+            vicinity: '123 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['restaurant', 'food'],
+            business_status: 'CLOSED_PERMANENTLY',
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+          },
+          {
+            place_id: 'ChIJopen',
+            name: 'Open Restaurant',
+            vicinity: '456 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo2' }],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe('Open Restaurant');
+  });
+
+  it('filters out places with no rating or low rating', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJnoRating',
+            name: 'No Rating Place',
+            vicinity: '123 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+          },
+          {
+            place_id: 'ChIJlow',
+            name: 'Low Rating Place',
+            vicinity: '456 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 2.5,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo2' }],
+          },
+          {
+            place_id: 'ChIJgood',
+            name: 'Good Restaurant',
+            vicinity: '789 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo3' }],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe('Good Restaurant');
+  });
+
+  it('filters out places with no photos', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJnoPhoto',
+            name: 'No Photo Place',
+            vicinity: '123 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 50,
+          },
+          {
+            place_id: 'ChIJphoto',
+            name: 'Has Photo Restaurant',
+            vicinity: '456 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe('Has Photo Restaurant');
+  });
+
+  it('filters out meal_takeaway places', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            place_id: 'ChIJtakeaway',
+            name: 'Sketchy Takeaway',
+            vicinity: '123 Market St',
+            geometry: { location: { lat: 37.7749, lng: -122.4194 } },
+            types: ['meal_takeaway', 'restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo1' }],
+          },
+          {
+            place_id: 'ChIJreal',
+            name: 'Real Restaurant',
+            vicinity: '456 Mission St',
+            geometry: { location: { lat: 37.784, lng: -122.4065 } },
+            types: ['restaurant', 'food'],
+            business_status: 'OPERATIONAL',
+            rating: 4.0,
+            user_ratings_total: 50,
+            photos: [{ photo_reference: 'photo2' }],
+          },
+        ],
+      }),
+    });
+
+    const results = await service.searchNearby(37.7749, -122.4194);
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe('Real Restaurant');
   });
 });
