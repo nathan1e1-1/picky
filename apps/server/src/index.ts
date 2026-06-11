@@ -16,6 +16,15 @@ app.get('/debug', async () => ({
   status: 'ok',
   apiKeyConfigured: !!process.env.GOOGLE_PLACES_API_KEY,
   apiKeyLength: process.env.GOOGLE_PLACES_API_KEY ? process.env.GOOGLE_PLACES_API_KEY.length : 0,
+  filters: {
+    excludedTypes: ['lodging', 'department_store', 'gas_station', 'car_rental', 'supermarket', 'shopping_mall', 'electronics_store', 'convenience_store', 'hardware_store', 'meal_takeaway', 'food_court', 'meal_delivery'],
+    minRating: 3.8,
+    minReviews: 100,
+    requiresPhotos: true,
+    requiresOperational: true,
+    minPrice: 2,
+    nameFilters: ['stall', 'cart', 'truck', 'hawker', 'food court', 'kiosk', 'stand', 'vendor', 'pasar', 'market', 'food centre', 'food center', 'food corner'],
+  },
   timestamp: new Date().toISOString(),
 }));
 
