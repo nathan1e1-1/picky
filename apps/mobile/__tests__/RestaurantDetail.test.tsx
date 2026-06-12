@@ -80,7 +80,7 @@ describe('RestaurantDetailScreen', () => {
     expect(result.getByText('Loading details...')).toBeTruthy();
   });
 
-  it('renders from saved store without API call', async () => {
+  it('renders from saved store without API call when hours exist', async () => {
     (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'ChIJ123' });
     useSavedStore.getState().addSaved(mockRestaurant);
 
@@ -91,6 +91,18 @@ describe('RestaurantDetailScreen', () => {
     expect(result.getByText('Open Now')).toBeTruthy();
     expect(result.getByText('0.8 mi away')).toBeTruthy();
     expect(fetchPlaceDetails).not.toHaveBeenCalled();
+  });
+
+  it('fetches from server when saved restaurant has empty hours', async () => {
+    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'ChIJ123' });
+    const restaurantWithEmptyHours = { ...mockRestaurant, hours: {} };
+    useSavedStore.getState().addSaved(restaurantWithEmptyHours);
+    (fetchPlaceDetails as jest.Mock).mockResolvedValue(mockPlaceDetailsResponse);
+
+    const result = await render(<RestaurantDetailScreen />);
+
+    await waitFor(() => expect(result.getByText('Test Bistro')).toBeTruthy());
+    expect(fetchPlaceDetails).toHaveBeenCalledWith('ChIJ123');
   });
 
   it('renders details after successful server fetch', async () => {
@@ -178,6 +190,19 @@ describe('RestaurantDetail', () => {
 
     fireEvent.press(result.getByTestId('tab-hours'));
     await waitFor(() => expect(result.getByText('Hours not available')).toBeTruthy());
+  });
+
+  it('splits multi-range hours onto separate lines', async () => {
+    const restaurantSplitHours = {
+      ...mockRestaurant,
+      hours: { Monday: '11:00 AM – 2:30 PM, 5:00 PM – 10:00 PM' },
+    };
+    const result = await render(<RestaurantDetail restaurant={restaurantSplitHours} onBack={jest.fn()} />);
+
+    fireEvent.press(result.getByTestId('tab-hours'));
+    await waitFor(() => expect(result.getByText('Monday')).toBeTruthy());
+    expect(result.getByText('11:00 AM – 2:30 PM')).toBeTruthy();
+    expect(result.getByText('5:00 PM – 10:00 PM')).toBeTruthy();
   });
 
   it('shows cuisine type chips in info tab', async () => {

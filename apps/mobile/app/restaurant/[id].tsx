@@ -20,13 +20,16 @@ export default function RestaurantDetailScreen() {
 
     // Check saved store first
     const savedRestaurant = useSavedStore.getState().getById(id);
-    if (savedRestaurant) {
+    const hasEmptyHours = !savedRestaurant || Object.keys(savedRestaurant.hours).length === 0;
+
+    if (savedRestaurant && !hasEmptyHours) {
+      // Saved restaurant has complete data including hours
       setRestaurant(savedRestaurant);
       setLoading(false);
       return;
     }
 
-    // Fallback to server API
+    // Fetch from server if not saved or if hours are missing
     fetchPlaceDetails(id)
       .then((d) => {
         setDetails(d);

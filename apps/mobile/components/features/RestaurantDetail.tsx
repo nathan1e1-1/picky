@@ -363,13 +363,18 @@ function HoursTab({
                   </View>
                 )}
               </View>
-              <Text
-                className={`${
-                  isToday ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
-                }`}
-              >
-                {hours}
-              </Text>
+              <View className="items-end">
+                {hours.split(', ').map((timeRange, idx) => (
+                  <Text
+                    key={idx}
+                    className={`${
+                      isToday ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    {timeRange}
+                  </Text>
+                ))}
+              </View>
             </View>
           );
         })}
