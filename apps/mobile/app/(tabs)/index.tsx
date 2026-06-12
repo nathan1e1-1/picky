@@ -132,9 +132,9 @@ export default function SwipeFeedScreen() {
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-neutral-900">
       {/* Header */}
-      <View className="px-5 pt-2 pb-4">
+      <View className="px-4 pt-2 pb-4">
         <Text className="text-2xl font-bold text-gray-900 dark:text-white">Picky</Text>
-        <Text className="text-sm text-gray-500 dark:text-gray-400">
+        <Text className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           {hasMoreCards ? `${remainingCount} spots nearby` : 'All caught up!'}
         </Text>
       </View>
@@ -162,27 +162,29 @@ export default function SwipeFeedScreen() {
           </View>
         ) : (
           <View className="flex-1 items-center justify-center px-8">
-            <View className="w-20 h-20 rounded-full bg-orange-100 dark:bg-orange-900/30 items-center justify-center mb-4">
-              <Heart size={32} color="#f97316" />
+            <View className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/30 items-center justify-center mb-4">
+              <Heart size={28} color="#f97316" />
             </View>
-            <Text className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
+            <Text className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2">
               You've seen it all!
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 text-center mb-6">
+            <Text className="text-gray-500 dark:text-gray-400 text-center text-sm mb-6">
               Check back later for more restaurant recommendations near you.
             </Text>
-            <Button
-              variant="primary"
-              onPress={handleFindMore}
-            >
-              Find More Restaurants
-            </Button>
-            <Button
-              variant="secondary"
-              onPress={handleReset}
-            >
-              Start Over
-            </Button>
+            <View className="w-full space-y-3">
+              <Button
+                variant="primary"
+                onPress={handleFindMore}
+              >
+                Find More Restaurants
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={handleReset}
+              >
+                Start Over
+              </Button>
+            </View>
           </View>
         )}
       </View>

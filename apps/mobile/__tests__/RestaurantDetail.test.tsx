@@ -180,7 +180,7 @@ describe('RestaurantDetail', () => {
 
     fireEvent.press(result.getByTestId('tab-menu'));
     await waitFor(() =>
-      expect(result.getByText('Menu information not available')).toBeTruthy()
+      expect(result.getByText('Menu not available')).toBeTruthy()
     );
   });
 

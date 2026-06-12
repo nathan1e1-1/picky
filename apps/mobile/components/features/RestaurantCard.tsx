@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { MapPin, Clock } from 'lucide-react-native';
 import { PickyRestaurant } from '@picky/types';
 import { PickyScoreBadge } from '@/components/ui/PickyScoreBadge';
@@ -43,10 +43,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const tags = [...cuisineTags, ...dietaryTags];
 
   return (
-    <View
-      className="flex-1 rounded-3xl overflow-hidden"
-      style={styles.container}
-    >
+    <View className="flex-1 rounded-3xl overflow-hidden bg-gray-900">
       {/* Full-bleed Image */}
       <Image
         source={{ uri: restaurant.photos[0] }}
@@ -54,8 +51,14 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         resizeMode="cover"
       />
 
-      {/* Dark overlay for text readability */}
-      <View style={styles.overlay} pointerEvents="none" />
+      {/* Bottom gradient overlay for text readability */}
+      <View
+        className="absolute bottom-0 left-0 right-0 h-2/3"
+        style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 100%)',
+        }}
+        pointerEvents="none"
+      />
 
       {/* Score Badge - top right */}
       <View className="absolute top-4 right-4 z-10">
@@ -63,17 +66,14 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       </View>
 
       {/* Content overlay at bottom */}
-      <View className="absolute bottom-0 left-0 right-0 p-5 z-10">
-        <Text
-          className="text-white text-2xl font-bold mb-2"
-          numberOfLines={2}
-          style={styles.textShadow}
-        >
+      <View className="absolute bottom-0 left-0 right-0 p-4 z-10">
+        {/* Restaurant Name */}
+        <Text className="text-white text-2xl font-bold mb-3" numberOfLines={2}>
           {restaurant.name}
         </Text>
 
-        {/* Info Row: distance + price + open status */}
-        <View className="flex-row items-center mb-3" style={styles.textShadow}>
+        {/* Info Row */}
+        <View className="flex-row items-center mb-3">
           {restaurant.distance && (
             <View className="flex-row items-center mr-4">
               <MapPin size={14} color="rgba(255,255,255,0.8)" />
@@ -101,8 +101,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             {tags.map((tag) => (
               <View
                 key={tag}
-                className="px-3 py-1 rounded-full"
-                style={styles.tagBackground}
+                className="px-3 py-1 rounded-full bg-white/25"
               >
                 <Text className="text-white text-xs font-medium">{tag}</Text>
               </View>
@@ -113,21 +112,3 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#1a1a1a',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-  },
-  textShadow: {
-    textShadowColor: 'rgba(0,0,0,0.6)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  tagBackground: {
-    backgroundColor: 'rgba(255,255,255,0.25)',
-  },
-});
