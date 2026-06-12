@@ -177,39 +177,39 @@ function InfoTab({
       </View>
 
       {/* Info Card */}
-      <View className="bg-white dark:bg-neutral-800 rounded-xl p-4 space-y-3">
+      <View className="bg-white dark:bg-neutral-800 rounded-xl p-5 space-y-4">
         {restaurant.distance && (
           <View className="flex-row items-center">
-            <Navigation size={18} color="#9ca3af" />
-            <Text className="text-gray-700 dark:text-gray-300 ml-3">{restaurant.distance} away</Text>
+            <Navigation size={20} color="#9ca3af" />
+            <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base">{restaurant.distance} away</Text>
           </View>
         )}
 
         <View className="flex-row items-center">
-          <MapPin size={18} color="#9ca3af" />
-          <Text className="text-gray-700 dark:text-gray-300 ml-3 flex-1">{restaurant.address}</Text>
+          <MapPin size={20} color="#9ca3af" />
+          <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base flex-1 leading-6">{restaurant.address}</Text>
         </View>
 
         {restaurant.phone && (
           <Pressable className="flex-row items-center" onPress={onOpenPhone}>
-            <Phone size={18} color="#9ca3af" />
-            <Text className="text-orange-500 dark:text-orange-400 ml-3">{restaurant.phone}</Text>
+            <Phone size={20} color="#9ca3af" />
+            <Text className="text-orange-500 dark:text-orange-400 ml-4 text-base">{restaurant.phone}</Text>
           </Pressable>
         )}
 
         {restaurant.website && (
           <Pressable className="flex-row items-center" onPress={onOpenWebsite}>
-            <Globe size={18} color="#9ca3af" />
-            <Text className="text-orange-500 dark:text-orange-400 ml-3" numberOfLines={1}>
+            <Globe size={20} color="#9ca3af" />
+            <Text className="text-orange-500 dark:text-orange-400 ml-4 text-base flex-1" numberOfLines={1}>
               {restaurant.website}
             </Text>
           </Pressable>
         )}
 
         <View className="flex-row items-center">
-          <Clock size={18} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
+          <Clock size={20} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
           <Text
-            className={`ml-3 font-medium ${
+            className={`ml-4 text-base font-medium ${
               restaurant.isOpenNow ? 'text-green-600' : 'text-red-500'
             }`}
           >
@@ -294,16 +294,16 @@ function LocationTab({
   onOpenMaps: () => void;
 }) {
   return (
-    <View className="space-y-4">
-      <View className="bg-white dark:bg-neutral-800 rounded-xl p-4 space-y-3">
+    <View className="space-y-6">
+      <View className="bg-white dark:bg-neutral-800 rounded-xl p-5 space-y-4">
         <View className="flex-row items-center">
-          <MapPin size={18} color="#9ca3af" />
-          <Text className="text-gray-700 dark:text-gray-300 ml-3 flex-1">{restaurant.address}</Text>
+          <MapPin size={20} color="#9ca3af" />
+          <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base flex-1 leading-6">{restaurant.address}</Text>
         </View>
         {restaurant.distance && (
           <View className="flex-row items-center">
-            <Navigation size={18} color="#9ca3af" />
-            <Text className="text-gray-700 dark:text-gray-300 ml-3">{restaurant.distance} away</Text>
+            <Navigation size={20} color="#9ca3af" />
+            <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base">{restaurant.distance} away</Text>
           </View>
         )}
       </View>
@@ -339,14 +339,14 @@ function HoursTab({
   }
 
   return (
-    <View className="space-y-4">
+    <View className="space-y-6">
       {/* Status Badge */}
-      <View className={`flex-row items-center self-start px-4 py-2 rounded-full ${
+      <View className={`flex-row items-center self-start px-4 py-2.5 rounded-full ${
         restaurant.isOpenNow ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'
       }`}>
-        <Clock size={16} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
+        <Clock size={18} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
         <Text
-          className={`ml-2 font-medium ${
+          className={`ml-2 font-semibold text-base ${
             restaurant.isOpenNow ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
           }`}
         >
@@ -361,7 +361,7 @@ function HoursTab({
           return (
             <View
               key={day}
-              className={`flex-row justify-between items-center py-3 px-4 ${
+              className={`flex-row justify-between items-center py-4 px-5 ${
                 isToday ? 'bg-orange-50 dark:bg-orange-900/20' : ''
               } ${index !== hoursEntries.length - 1 ? 'border-b border-gray-100 dark:border-neutral-700' : ''}`}
             >
