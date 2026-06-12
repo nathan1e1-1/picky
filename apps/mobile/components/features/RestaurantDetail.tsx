@@ -64,8 +64,8 @@ export function RestaurantDetail({ restaurant, onBack }: RestaurantDetailProps) 
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-900">
-      {/* Header Image with gradient */}
-      <View className="relative h-[35%]">
+      {/* Header Image */}
+      <View className="relative h-[40%]">
         {restaurant.photos[0] ? (
           <Image source={{ uri: restaurant.photos[0] }} className="w-full h-full" resizeMode="cover" />
         ) : (
@@ -73,21 +73,19 @@ export function RestaurantDetail({ restaurant, onBack }: RestaurantDetailProps) 
             <Text className="text-gray-400 dark:text-gray-500">No photo available</Text>
           </View>
         )}
-        {/* Gradient overlay for back button readability */}
-        <View className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/50 to-transparent" />
         <Pressable
           testID="back-button"
-          className="absolute top-12 left-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md items-center justify-center"
+          className="absolute top-12 left-4 w-11 h-11 rounded-full bg-black/40 items-center justify-center"
           onPress={onBack}
         >
-          <ArrowLeft size={20} color="white" />
+          <ArrowLeft size={22} color="white" />
         </Pressable>
       </View>
 
-      {/* Content Card */}
+      {/* Content */}
       <View className="flex-1 -mt-6 bg-gray-50 dark:bg-neutral-900 rounded-t-3xl">
         {/* Tab Bar */}
-        <View className="flex-row px-4 pt-4 pb-2">
+        <View className="flex-row px-4 pt-5 pb-3">
           {TAB_CONFIG.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -98,9 +96,9 @@ export function RestaurantDetail({ restaurant, onBack }: RestaurantDetailProps) 
                 onPress={() => setActiveTab(tab.key)}
                 className={`flex-1 items-center py-3 rounded-xl ${isActive ? 'bg-orange-50 dark:bg-orange-900/20' : ''}`}
               >
-                <Icon size={18} color={isActive ? '#f97316' : isDark ? '#9ca3af' : '#6b7280'} />
+                <Icon size={20} color={isActive ? '#f97316' : isDark ? '#9ca3af' : '#6b7280'} />
                 <Text
-                  className={`text-xs mt-1 font-medium ${
+                  className={`text-sm mt-1.5 font-medium ${
                     isActive ? 'text-orange-500' : isDark ? 'text-gray-400' : 'text-gray-500'
                   }`}
                 >
@@ -125,7 +123,7 @@ export function RestaurantDetail({ restaurant, onBack }: RestaurantDetailProps) 
             <LocationTab restaurant={restaurant} onOpenMaps={openMaps} />
           )}
           {activeTab === 'hours' && <HoursTab restaurant={restaurant} currentDay={currentDay} />}
-          <View className="h-8" />
+          <View className="h-12" />
         </ScrollView>
       </View>
     </View>
@@ -142,74 +140,75 @@ function InfoTab({
   onOpenWebsite: () => void;
 }) {
   return (
-    <View className="space-y-6">
-      {/* Name & Score */}
-      <View className="flex-row items-start justify-between">
-        <View className="flex-1 mr-4">
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white" numberOfLines={2}>
-            {restaurant.name}
-          </Text>
-          <View className="flex-row items-center mt-2">
-            <Star size={14} color="#fbbf24" fill="#fbbf24" />
-            <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+    <View className="space-y-8">
+      {/* Header Section */}
+      <View>
+        <Text className="text-3xl font-bold text-gray-900 dark:text-white leading-tight" numberOfLines={2}>
+          {restaurant.name}
+        </Text>
+        
+        <View className="flex-row items-center mt-3 space-x-4">
+          <View className="flex-row items-center">
+            <Star size={16} color="#fbbf24" fill="#fbbf24" />
+            <Text className="text-base text-gray-500 dark:text-gray-400 ml-1.5">
               {restaurant.pickyScoreBreakdown.googleRating} rating
             </Text>
           </View>
+          <PickyScoreBadge score={restaurant.pickyScore} size="sm" />
         </View>
-        <PickyScoreBadge score={restaurant.pickyScore} size="lg" />
       </View>
 
-      {/* Cuisine & Price */}
+      {/* Cuisine Tags */}
       <View className="flex-row flex-wrap">
         {restaurant.cuisineTypes.map((cuisine) => (
           <View
             key={cuisine}
-            className="bg-orange-100 dark:bg-orange-900/30 rounded-full px-3 py-1.5 mr-2 mb-2"
+            className="bg-orange-100 dark:bg-orange-900/30 rounded-full px-4 py-2 mr-2 mb-2"
           >
-            <Text className="text-xs text-orange-700 dark:text-orange-300 font-medium">{cuisine}</Text>
+            <Text className="text-sm text-orange-700 dark:text-orange-300 font-medium">{cuisine}</Text>
           </View>
         ))}
-        <View className="bg-gray-100 dark:bg-neutral-800 rounded-full px-3 py-1.5 mr-2 mb-2">
-          <Text className="text-xs text-gray-600 dark:text-gray-400">
+        <View className="bg-gray-100 dark:bg-neutral-800 rounded-full px-4 py-2 mr-2 mb-2">
+          <Text className="text-sm text-gray-600 dark:text-gray-400">
             {'$'.repeat(restaurant.priceRange)}
           </Text>
         </View>
       </View>
 
       {/* Info Card */}
-      <View className="bg-white dark:bg-neutral-800 rounded-xl p-5 space-y-4">
+      <View className="bg-white dark:bg-neutral-800 rounded-2xl p-6 space-y-5">
         {restaurant.distance && (
           <View className="flex-row items-center">
-            <Navigation size={20} color="#9ca3af" />
-            <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base">{restaurant.distance} away</Text>
+            <Navigation size={22} color="#9ca3af" />
+            <Text className="text-gray-700 dark:text-gray-300 ml-4 text-lg">{restaurant.distance} away</Text>
           </View>
         )}
 
         <View className="flex-row items-center">
-          <MapPin size={20} color="#9ca3af" />
-          <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base flex-1 leading-6">{restaurant.address}</Text>
+          <MapPin size={22} color="#9ca3af" />
+          <Text className="text-gray-700 dark:text-gray-300 ml-4 text-lg flex-1 leading-7">{restaurant.address}</Text>
         </View>
 
         {restaurant.phone && (
           <Pressable className="flex-row items-center" onPress={onOpenPhone}>
-            <Phone size={20} color="#9ca3af" />
-            <Text className="text-orange-500 dark:text-orange-400 ml-4 text-base">{restaurant.phone}</Text>
+            <Phone size={22} color="#9ca3af" />
+            <Text className="text-orange-500 dark:text-orange-400 ml-4 text-lg">{restaurant.phone}</Text>
           </Pressable>
         )}
 
         {restaurant.website && (
           <Pressable className="flex-row items-center" onPress={onOpenWebsite}>
-            <Globe size={20} color="#9ca3af" />
-            <Text className="text-orange-500 dark:text-orange-400 ml-4 text-base flex-1" numberOfLines={1}>
+            <Globe size={22} color="#9ca3af" />
+            <Text className="text-orange-500 dark:text-orange-400 ml-4 text-lg flex-1" numberOfLines={1}>
               {restaurant.website}
             </Text>
           </Pressable>
         )}
 
         <View className="flex-row items-center">
-          <Clock size={20} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
+          <Clock size={22} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
           <Text
-            className={`ml-4 text-base font-medium ${
+            className={`ml-4 text-lg font-semibold ${
               restaurant.isOpenNow ? 'text-green-600' : 'text-red-500'
             }`}
           >
@@ -226,54 +225,54 @@ function MenuTab({ restaurant }: { restaurant: PickyRestaurant }) {
 
   if (!hasMenu) {
     return (
-      <View className="items-center py-12">
-        <View className="w-16 h-16 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center mb-4">
-          <Utensils size={28} color="#9ca3af" />
+      <View className="items-center py-16">
+        <View className="w-20 h-20 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center mb-6">
+          <Utensils size={32} color="#9ca3af" />
         </View>
-        <Text className="text-gray-900 dark:text-white text-lg font-semibold text-center mb-2">
+        <Text className="text-gray-900 dark:text-white text-xl font-semibold text-center mb-3">
           Menu not available
         </Text>
-        <Text className="text-gray-500 dark:text-gray-400 text-sm text-center px-8">
-          We're working on adding menu details. Check back soon!
+        <Text className="text-gray-500 dark:text-gray-400 text-base text-center px-8 leading-6">
+          We're working on adding menu details
         </Text>
       </View>
     );
   }
 
   return (
-    <View className="space-y-6">
+    <View className="space-y-8">
       {restaurant.menu.map((category, idx) => (
         <View key={idx}>
-          <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <Text className="text-xl font-semibold text-gray-900 dark:text-white mb-5">
             {category.category}
           </Text>
-          <View className="bg-white dark:bg-neutral-800 rounded-xl overflow-hidden">
+          <View className="bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden">
             {category.items.map((item, itemIdx) => (
               <View
                 key={itemIdx}
-                className={`flex-row justify-between items-start p-4 ${
+                className={`flex-row justify-between items-start p-5 ${
                   itemIdx !== category.items.length - 1 ? 'border-b border-gray-100 dark:border-neutral-700' : ''
                 }`}
               >
                 <View className="flex-1 mr-4">
-                  <Text className="text-gray-900 dark:text-white font-medium">{item.name}</Text>
+                  <Text className="text-gray-900 dark:text-white font-semibold text-lg">{item.name}</Text>
                   {item.description && (
-                    <Text className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                    <Text className="text-gray-500 dark:text-gray-400 text-base mt-2 leading-6">
                       {item.description}
                     </Text>
                   )}
                   {item.dietaryTags.length > 0 && (
-                    <View className="flex-row flex-wrap mt-2">
+                    <View className="flex-row flex-wrap mt-3">
                       {item.dietaryTags.map((tag) => (
-                        <View key={tag} className="bg-green-100 dark:bg-green-900/30 rounded-full px-2 py-0.5 mr-2">
-                          <Text className="text-xs text-green-700 dark:text-green-300">{tag}</Text>
+                        <View key={tag} className="bg-green-100 dark:bg-green-900/30 rounded-full px-3 py-1 mr-2">
+                          <Text className="text-sm text-green-700 dark:text-green-300">{tag}</Text>
                         </View>
                       ))}
                     </View>
                   )}
                 </View>
                 {item.price && (
-                  <Text className="text-gray-900 dark:text-white font-semibold">
+                  <Text className="text-gray-900 dark:text-white font-bold text-lg">
                     ${item.price.toFixed(2)}
                   </Text>
                 )}
@@ -294,16 +293,16 @@ function LocationTab({
   onOpenMaps: () => void;
 }) {
   return (
-    <View className="space-y-6">
-      <View className="bg-white dark:bg-neutral-800 rounded-xl p-5 space-y-4">
+    <View className="space-y-8">
+      <View className="bg-white dark:bg-neutral-800 rounded-2xl p-6 space-y-5">
         <View className="flex-row items-center">
-          <MapPin size={20} color="#9ca3af" />
-          <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base flex-1 leading-6">{restaurant.address}</Text>
+          <MapPin size={22} color="#9ca3af" />
+          <Text className="text-gray-700 dark:text-gray-300 ml-4 text-lg flex-1 leading-7">{restaurant.address}</Text>
         </View>
         {restaurant.distance && (
           <View className="flex-row items-center">
-            <Navigation size={20} color="#9ca3af" />
-            <Text className="text-gray-700 dark:text-gray-300 ml-4 text-base">{restaurant.distance} away</Text>
+            <Navigation size={22} color="#9ca3af" />
+            <Text className="text-gray-700 dark:text-gray-300 ml-4 text-lg">{restaurant.distance} away</Text>
           </View>
         )}
       </View>
@@ -327,11 +326,11 @@ function HoursTab({
 
   if (!hasHours) {
     return (
-      <View className="items-center py-12">
-        <View className="w-16 h-16 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center mb-4">
-          <Clock size={28} color="#9ca3af" />
+      <View className="items-center py-16">
+        <View className="w-20 h-20 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center mb-6">
+          <Clock size={32} color="#9ca3af" />
         </View>
-        <Text className="text-gray-900 dark:text-white text-lg font-semibold text-center mb-2">
+        <Text className="text-gray-900 dark:text-white text-xl font-semibold text-center mb-3">
           Hours not available
         </Text>
       </View>
@@ -339,14 +338,14 @@ function HoursTab({
   }
 
   return (
-    <View className="space-y-6">
+    <View className="space-y-8">
       {/* Status Badge */}
-      <View className={`flex-row items-center self-start px-4 py-2.5 rounded-full ${
+      <View className={`flex-row items-center self-start px-5 py-3 rounded-full ${
         restaurant.isOpenNow ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'
       }`}>
-        <Clock size={18} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
+        <Clock size={20} color={restaurant.isOpenNow ? '#22c55e' : '#ef4444'} />
         <Text
-          className={`ml-2 font-semibold text-base ${
+          className={`ml-3 font-bold text-lg ${
             restaurant.isOpenNow ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
           }`}
         >
@@ -354,8 +353,11 @@ function HoursTab({
         </Text>
       </View>
 
+      {/* Gap between status and schedule */}
+      <View className="h-2" />
+
       {/* Weekly Schedule */}
-      <View className="bg-white dark:bg-neutral-800 rounded-xl overflow-hidden">
+      <View className="bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden">
         {hoursEntries.map(([day, hours], index) => {
           const isToday = day.toLowerCase() === currentDay;
           return (
@@ -367,15 +369,15 @@ function HoursTab({
             >
               <View className="flex-row items-center">
                 <Text
-                  className={`capitalize font-medium ${
+                  className={`capitalize font-semibold text-lg ${
                     isToday ? 'text-orange-700 dark:text-orange-300' : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   {day}
                 </Text>
                 {isToday && (
-                  <View className="bg-orange-500 rounded-full px-2 py-0.5 ml-2">
-                    <Text className="text-white text-xs font-medium">Today</Text>
+                  <View className="bg-orange-500 rounded-full px-3 py-1 ml-3">
+                    <Text className="text-white text-sm font-bold">Today</Text>
                   </View>
                 )}
               </View>
@@ -383,8 +385,8 @@ function HoursTab({
                 {hours.split(', ').map((timeRange, idx) => (
                   <Text
                     key={idx}
-                    className={`${
-                      isToday ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400'
+                    className={`text-lg ${
+                      isToday ? 'text-gray-900 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-400'
                     }`}
                   >
                     {timeRange}

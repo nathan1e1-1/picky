@@ -49,7 +49,7 @@ describe('SwipeCard', () => {
 
     expect(getByText('Test Restaurant')).toBeTruthy();
     expect(getByText('0.5 mi')).toBeTruthy();
-    expect(getByText('Open Now')).toBeTruthy();
+    expect(getByText('Open')).toBeTruthy();
     // Tags should be title case
     expect(getByText('Italian')).toBeTruthy();
     expect(getAllByText('Vegetarian').length).toBeGreaterThanOrEqual(1);

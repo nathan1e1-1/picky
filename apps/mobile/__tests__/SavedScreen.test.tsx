@@ -66,12 +66,12 @@ describe('SavedScreen', () => {
 
   it('shows empty state when no saved restaurants', async () => {
     const result = await render(<SavedScreen />);
-    expect(result.getByText('No saved restaurants yet')).toBeTruthy();
+    expect(result.getByText('No saved restaurants')).toBeTruthy();
   });
 
   it('shows saved count', async () => {
     useSavedStore.getState().addSaved(mockRestaurant);
     const result = await render(<SavedScreen />);
-    expect(result.getByText('1 restaurant saved')).toBeTruthy();
+    expect(result.getByText('1 restaurant')).toBeTruthy();
   });
 });

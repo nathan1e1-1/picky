@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { MapPin, Clock } from 'lucide-react-native';
 import { PickyRestaurant } from '@picky/types';
 import { PickyScoreBadge } from '@/components/ui/PickyScoreBadge';
@@ -51,14 +51,8 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         resizeMode="cover"
       />
 
-      {/* Bottom gradient overlay for text readability */}
-      <View
-        className="absolute bottom-0 left-0 right-0 h-2/3"
-        style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 100%)',
-        }}
-        pointerEvents="none"
-      />
+      {/* Bottom gradient overlay using native styles */}
+      <View style={styles.gradientOverlay} pointerEvents="none" />
 
       {/* Score Badge - top right */}
       <View className="absolute top-4 right-4 z-10">
@@ -66,44 +60,48 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       </View>
 
       {/* Content overlay at bottom */}
-      <View className="absolute bottom-0 left-0 right-0 p-4 z-10">
+      <View className="absolute bottom-0 left-0 right-0 p-5 z-10">
         {/* Restaurant Name */}
-        <Text className="text-white text-2xl font-bold mb-3" numberOfLines={2}>
+        <Text 
+          className="text-white text-3xl font-bold mb-4" 
+          numberOfLines={2}
+          style={styles.textShadow}
+        >
           {restaurant.name}
         </Text>
 
         {/* Info Row */}
-        <View className="flex-row items-center mb-3">
+        <View className="flex-row items-center mb-4" style={styles.textShadow}>
           {restaurant.distance && (
-            <View className="flex-row items-center mr-4">
-              <MapPin size={14} color="rgba(255,255,255,0.8)" />
-              <Text className="text-white/80 text-sm ml-1">{restaurant.distance}</Text>
+            <View className="flex-row items-center mr-5">
+              <MapPin size={16} color="rgba(255,255,255,0.9)" />
+              <Text className="text-white/90 text-base ml-2 font-medium">{restaurant.distance}</Text>
             </View>
           )}
-          <View className="flex-row items-center mr-4">
+          <View className="flex-row items-center mr-5">
             <PriceIndicator level={restaurant.priceRange} />
           </View>
           <View className="flex-row items-center">
-            <Clock size={14} color={restaurant.isOpenNow ? '#86efac' : '#fca5a5'} />
+            <Clock size={16} color={restaurant.isOpenNow ? '#86efac' : '#fca5a5'} />
             <Text
-              className={`text-sm ml-1 font-medium ${
+              className={`text-base ml-2 font-semibold ${
                 restaurant.isOpenNow ? 'text-green-300' : 'text-red-300'
               }`}
             >
-              {restaurant.isOpenNow ? 'Open Now' : 'Closed'}
+              {restaurant.isOpenNow ? 'Open' : 'Closed'}
             </Text>
           </View>
         </View>
 
         {/* Tags */}
         {tags.length > 0 && (
-          <View className="flex-row flex-wrap gap-2">
+          <View className="flex-row flex-wrap gap-2.5">
             {tags.map((tag) => (
               <View
                 key={tag}
-                className="px-3 py-1 rounded-full bg-white/25"
+                className="px-4 py-1.5 rounded-full bg-white/20"
               >
-                <Text className="text-white text-xs font-medium">{tag}</Text>
+                <Text className="text-white text-sm font-medium">{tag}</Text>
               </View>
             ))}
           </View>
@@ -112,3 +110,15 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+  },
+  textShadow: {
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+});

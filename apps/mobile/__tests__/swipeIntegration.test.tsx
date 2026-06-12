@@ -73,7 +73,7 @@ describe('Swipe Card Integration', () => {
     expect(getByText('Italian')).toBeTruthy();
     expect(getByText('2 spots nearby')).toBeTruthy();
     expect(getByText('0.8 mi')).toBeTruthy();
-    expect(getAllByText('Open Now').length).toBeGreaterThanOrEqual(1);
+    expect(getAllByText('Open').length).toBeGreaterThanOrEqual(1);
     expect(getByText('Vegetarian')).toBeTruthy();
   });
 
