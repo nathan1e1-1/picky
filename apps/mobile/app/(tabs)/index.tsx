@@ -171,7 +171,7 @@ export default function SwipeFeedScreen() {
             <Text className="text-gray-500 dark:text-gray-400 text-center text-sm mb-6">
               Check back later for more restaurant recommendations near you.
             </Text>
-            <View className="w-full space-y-3">
+            <View className="w-full space-y-4">
               <Button
                 variant="primary"
                 onPress={handleFindMore}

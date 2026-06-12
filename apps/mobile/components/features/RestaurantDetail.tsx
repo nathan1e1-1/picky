@@ -147,14 +147,16 @@ function InfoTab({
           {restaurant.name}
         </Text>
         
-        <View className="flex-row items-center mt-3 space-x-4">
+        <View className="flex-row items-center mt-3 space-x-6">
           <View className="flex-row items-center">
             <Star size={16} color="#fbbf24" fill="#fbbf24" />
             <Text className="text-base text-gray-500 dark:text-gray-400 ml-1.5">
               {restaurant.pickyScoreBreakdown.googleRating} rating
             </Text>
           </View>
-          <PickyScoreBadge score={restaurant.pickyScore} size="sm" />
+          <View className="ml-2">
+            <PickyScoreBadge score={restaurant.pickyScore} size="sm" />
+          </View>
         </View>
       </View>
 
