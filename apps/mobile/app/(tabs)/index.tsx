@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart } from 'lucide-react-native';
 import { router } from 'expo-router';
@@ -9,6 +9,7 @@ import { useSavedStore } from '@/store/savedStore';
 import { useLocation } from '@/hooks/useLocation';
 import { fetchNearbyRestaurants, jitterCoordinates } from '@/lib/api';
 import { mockRestaurants } from '@/lib/mockData';
+import { Button } from '@/components/ui/Button';
 
 export default function SwipeFeedScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -96,8 +97,8 @@ export default function SwipeFeedScreen() {
         <Text className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
           Server: {process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.111:3000'}
         </Text>
-        <Pressable
-          className="bg-orange-500 px-6 py-3 rounded-full mb-3"
+        <Button
+          variant="primary"
           onPress={() => {
             if (locationError) {
               refetchLocation();
@@ -116,14 +117,14 @@ export default function SwipeFeedScreen() {
             }
           }}
         >
-          <Text className="text-white font-semibold">Try Again</Text>
-        </Pressable>
-        <Pressable
-          className="border border-orange-500 px-6 py-3 rounded-full mb-3"
+          Try Again
+        </Button>
+        <Button
+          variant="secondary"
           onPress={handleUseDemoData}
         >
-          <Text className="text-orange-500 font-semibold">Use Demo Data</Text>
-        </Pressable>
+          Use Demo Data
+        </Button>
       </SafeAreaView>
     );
   }
@@ -170,18 +171,18 @@ export default function SwipeFeedScreen() {
             <Text className="text-gray-500 dark:text-gray-400 text-center mb-6">
               Check back later for more restaurant recommendations near you.
             </Text>
-            <Pressable
-              className="bg-orange-500 px-6 py-3 rounded-full mb-3"
+            <Button
+              variant="primary"
               onPress={handleFindMore}
             >
-              <Text className="text-white font-semibold text-base">Find More Restaurants</Text>
-            </Pressable>
-            <Pressable
-              className="border border-gray-300 dark:border-gray-700 px-6 py-3 rounded-full"
+              Find More Restaurants
+            </Button>
+            <Button
+              variant="secondary"
               onPress={handleReset}
             >
-              <Text className="text-gray-700 dark:text-gray-300 font-semibold text-base">Start Over</Text>
-            </Pressable>
+              Start Over
+            </Button>
           </View>
         )}
       </View>

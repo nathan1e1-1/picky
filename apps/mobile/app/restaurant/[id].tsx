@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, Text, Pressable } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { RestaurantDetail } from '@/components/features/RestaurantDetail';
 import { fetchPlaceDetails, PlaceDetails } from '@/lib/api';
 import { useSavedStore } from '@/store/savedStore';
 import { PickyRestaurant } from '@picky/types';
+import { Button } from '@/components/ui/Button';
 
 export default function RestaurantDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -81,9 +82,9 @@ export default function RestaurantDetailScreen() {
         <Text className="text-xl font-bold text-gray-900 dark:text-white text-center mb-4">
           {error || 'Not found'}
         </Text>
-        <Pressable className="bg-orange-500 px-6 py-3 rounded-full" onPress={() => router.back()}>
-          <Text className="text-white font-semibold">Go Back</Text>
-        </Pressable>
+        <Button variant="primary" onPress={() => router.back()}>
+          Go Back
+        </Button>
       </View>
     );
   }

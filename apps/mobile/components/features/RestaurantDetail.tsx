@@ -20,6 +20,7 @@ import {
   Calendar,
 } from 'lucide-react-native';
 import { PickyScoreBadge } from '@/components/ui/PickyScoreBadge';
+import { Button } from '@/components/ui/Button';
 import { PickyRestaurant } from '@picky/types';
 
 type Tab = 'info' | 'menu' | 'location' | 'hours';
@@ -295,12 +296,9 @@ function LocationTab({
         )}
       </View>
 
-      <Pressable
-        onPress={onOpenMaps}
-        className="bg-orange-500 py-3 rounded-full items-center"
-      >
-        <Text className="text-white font-semibold">Open in Maps</Text>
-      </Pressable>
+      <Button variant="primary" onPress={onOpenMaps}>
+        Open in Maps
+      </Button>
     </View>
   );
 }
